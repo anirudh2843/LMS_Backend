@@ -1,6 +1,6 @@
 const express = require("express");
-// const User = require("../models/user");
-// const { validateSignUpData } = require("../utils/validation");
+const User = require("../models/user");
+const { validateSignUpData } = require("../utils/validation");
 const authRouter = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -19,18 +19,19 @@ authRouter.post("/signup", async (req, res) => {
       emailId,
       password: passwordHash,
     });
+
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
 
     // add token to cookie and send response to user
-    // res.cookie("token", token, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "None",
-    //   expires: new Date(Date.now() + 8 * 3600000),
-    // });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
 
-    // res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
+    res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
     res.json({ message: "user added successsfully", data: savedUser });
   } catch (err) {
     res.status(400).send("Error  :" + err.message);

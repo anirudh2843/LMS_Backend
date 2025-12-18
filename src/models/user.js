@@ -29,30 +29,28 @@ const userSchema = new mongoose.Schema(
         values: ["male", "female", "other"],
         message: `{VALUE} is not a valid gender type`,
       },
-      // validate(value) {
-      //   if (!["male", "female", "other"].includes(value)) {
-      //     throw new Error("Gender is not a vaild");
-      //   }
-      // },
     },
     age: {
       type: Number,
-    },
-    about: {
-      type: String,
-      default: "this is default about data",
     },
     photoUrl: {
       type: String,
       default:
         "https://media.istockphoto.com/id/1217986760/vector/man-stand-pose-thin-line-icon-man-in-front-pose-with-arms-down-at-the-waist-outline-style.jpg?s=612x612&w=0&k=20&c=qp4A2XR8msxdygYJUkwMStBfrMFAX_aj7XAOP_Ogau4=",
     },
-    skills: {
-      type: [String],
-    },
   },
   { timestamps: true }
 );
+
+userSchema.methods.getJWT = function () {
+  const user = this;
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "8h",
+  });
+
+  return token;
+};
 
 userSchema.methods.validatePassword = async function (passwordByUser) {
   const user = this;
