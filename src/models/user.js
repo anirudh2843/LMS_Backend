@@ -38,18 +38,25 @@ const userSchema = new mongoose.Schema(
       default:
         "https://media.istockphoto.com/id/1217986760/vector/man-stand-pose-thin-line-icon-man-in-front-pose-with-arms-down-at-the-waist-outline-style.jpg?s=612x612&w=0&k=20&c=qp4A2XR8msxdygYJUkwMStBfrMFAX_aj7XAOP_Ogau4=",
     },
+    role: {
+      type: String,
+      enum: ["student", "teacher", "admin"],
+      required: true,
+      default: "student",
+    },
   },
   { timestamps: true }
 );
 
 userSchema.methods.getJWT = function () {
-  const user = this;
-
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "8h",
-  });
-
-  return token;
+  return jwt.sign(
+    {
+      _id: this._id,
+      role: this.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "8h" }
+  );
 };
 
 userSchema.methods.validatePassword = async function (passwordByUser) {

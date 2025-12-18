@@ -6,11 +6,10 @@ const bcrypt = require("bcrypt");
 
 authRouter.post("/signup", async (req, res) => {
   try {
-    // validate the data
     validateSignUpData(req);
 
-    // encrypt the password
-    const { firstName, lastName, emailId, password } = req.body;
+    const { firstName, lastName, emailId, password, role } = req.body;
+
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = new User({
@@ -18,23 +17,23 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       emailId,
       password: passwordHash,
+      role, // student | faculty | admin
     });
 
     const savedUser = await user.save();
-    const token = await savedUser.getJWT();
+    const token = savedUser.getJWT();
 
-    // add token to cookie and send response to user
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
       expires: new Date(Date.now() + 8 * 3600000),
     });
 
-    res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
-    res.json({ message: "user added successsfully", data: savedUser });
+    res.status(201).json({
+      message: "Signup successful",
+      data: savedUser,
+      role: savedUser.role,
+    });
   } catch (err) {
-    res.status(400).send("Error  :" + err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -52,13 +51,14 @@ authRouter.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = await user.getJWT();
+    const token = user.getJWT();
 
-    // add token to cookie and send response to user
-    // res.cookie("token", token, {
-    //   expires: new Date(Date.now() + 8 * 3600000),
-    // });
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+
     return res.status(200).json({
+      message: "Login successful",
       token,
       data: {
         _id: user._id,
@@ -66,12 +66,11 @@ authRouter.post("/login", async (req, res) => {
         lastName: user.lastName,
         emailId: user.emailId,
       },
+      role: user.role, //  frontend uses this for routing
     });
   } catch (err) {
     console.error("Login Error:", err);
-    return res
-      .status(500)
-      .json({ message: "Login failed", error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -1,4 +1,4 @@
-require("dotenv").config(); 
+require("dotenv").config();
 
 const express = require("express");
 const http = require("http");
@@ -6,7 +6,10 @@ const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/database");
 const authRouter = require("./routes/auth");
-const profileRouter = require("./routes/profile");
+
+const studentRouter = require("./routes/student");
+const facultyRouter = require("./routes/faculty");
+const adminRouter = require("./routes/admin");
 
 const app = express();
 
@@ -14,7 +17,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", authRouter);
-app.use("/", profileRouter);
+
+app.use("/student", studentRouter);
+app.use("/teacher", facultyRouter);
+app.use("/admin", adminRouter);
 
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
