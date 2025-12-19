@@ -8,6 +8,7 @@ const connectDB = require("./config/database");
 const authRouter = require("./routes/auth");
 
 const studentRouter = require("./routes/student");
+const studentDashboardRouter = require("./routes/studentDashboard");
 const facultyRouter = require("./routes/faculty");
 const adminRouter = require("./routes/admin");
 
@@ -18,7 +19,8 @@ app.use(cookieParser());
 
 app.use("/", authRouter);
 
-app.use("/student", studentRouter);
+app.use("/api/students", studentRouter);
+app.use("/api/students", studentDashboardRouter);
 app.use("/teacher", facultyRouter);
 app.use("/admin", adminRouter);
 
