@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/database");
 const authRouter = require("./routes/auth");
 
+const assignmentRouter = require("./routes/assignment");
+const submissionRouter = require("./routes/submission");
+const progressRouter = require("./routes/progress");
 const studentRouter = require("./routes/student");
 const studentDashboardRouter = require("./routes/studentDashboard");
 const facultyRouter = require("./routes/faculty");
@@ -19,6 +22,9 @@ app.use(cookieParser());
 
 app.use("/", authRouter);
 
+app.use("/api/assignments", assignmentRouter);
+app.use("/api/submissions", submissionRouter);
+app.use("/api/progress", progressRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/students", studentDashboardRouter);
 app.use("/teacher", facultyRouter);

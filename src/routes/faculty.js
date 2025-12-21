@@ -4,7 +4,7 @@ const authorizeRoles = require("../middleWares/authorizeRoles");
 
 const router = express.Router();
 
-router.get("/dashboard", userAuth, authorizeRoles("faculty"), (req, res) => {
+router.get("/dashboard", userAuth, authorizeRoles("teacher"), (req, res) => {
   res.json({
     message: "Faculty Dashboard",
     user: req.user,

@@ -44,6 +44,33 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "student",
     },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: function () {
+        return this.role === "teacher" ? "pending" : "approved";
+      },
+    },
+
+    teacherProfile: {
+      qualification: {
+        type: String,
+      },
+      experience: {
+        type: Number, // years
+      },
+      subjects: [
+        {
+          type: String,
+        },
+      ],
+    },
+    enrolledCourses:[
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      }
+    ]
   },
   { timestamps: true }
 );
